@@ -75,3 +75,6 @@ crash.log
 *.env
 credentials.json
 secrets.yml
+
+# Terraform variable files
+*.tfvars
