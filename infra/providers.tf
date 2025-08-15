@@ -1,11 +1,15 @@
 # Configuring Terraform itself
 terraform {
-    # This specifies that we need the "google" provider and which version we want.
+    # This specifies that we need the "google" and "confluent" provider and which version we want.
     # Pinning versions is a best practice to prevent unexpected breaking changes.
     required_providers {
         google = {
             source = "hashicorp/google"
             version = "~> 5.10"
+        }
+        confluent = {
+            source = "confluentinc/confluent"
+            version = "~> 1.70"
         }
     }
     # This is the most important block for team collaboration.
@@ -20,4 +24,9 @@ provider "google" {
     project = "caramel-banana-2212-0802"
     region = "asia-south1"
     zone = "asia-south1-a"
+}
+# Adding this block to configure the Confluent provider
+provider "confluent" {
+    cloud_api_key = var.confluent_cloud_api_key
+    cloud_api_secret = var.confluent_cloud_api_secret
 }
