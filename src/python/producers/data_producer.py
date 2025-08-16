@@ -1,4 +1,5 @@
-import logging, random, uuid, json, time
+import logging, random, uuid, json, time, os
+from dotenv import load_dotenv
 from datetime import datetime, timezone
 from confluent_kafka import Producer
 
@@ -8,8 +9,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# --- Loading the env variables into os.environ object dict ---
+load_dotenv()
+logger.info("Loading the env variables into os.environ object dict")
+
 # --- Kafka Producer Configuration (Placeholder) ---
-KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
+KAFKA_BOOTSTRAP_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVER")
 KAFKA_TOPIC = "raw_stock_ticks"
 
 class Stock:
@@ -94,10 +99,14 @@ TICKER_PORTFOLIO = {
 def create_kafka_producer():
     """Creates and returns a Confluent Kafka Producer instance."""
     try:
-        producer = Producer({
-            "bootstrap.servers" : KAFKA_BOOTSTRAP_SERVERS,
-            # TODO: Add security configurations here  
-        })
+        conf = {
+            "bootstrap.servers" : KAFKA_BOOTSTRAP_SERVER,
+            "security.protocol" : "SASL_SSL",
+            "sasl.mechanisms" : "PLAIN",
+            "sasl.username" : os.getenv("KAFKA_API_KEY"),
+            "sasl.password" : os.getenv("KAFKA_API_SECRET") 
+        }
+        producer = Producer(conf)
         logger.info("Kafka Producer created successfully.")
         return producer
     except Exception as e:
@@ -127,7 +136,7 @@ def main():
     try:
         while True:
             stock_trade = generate_stock_trade()
-            logger.info(f"Generated trade for {stock_trade['ticker']}: Price=${stock_trade['trade_details']['price']:.2f}")
+            logger.info(f"Generated trade for {stock_trade['ticker']}: Price=${stock_trade['trade_details']['LTP']:.2f}")
 
             producer.produce(
                 KAFKA_TOPIC,
