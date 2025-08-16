@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 logger.info("Loading the env variables into os.environ object dict")
 
-# --- Kafka Producer Configuration (Placeholder) ---
+# --- Kafka Producer Configuration ---
 KAFKA_BOOTSTRAP_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVER")
 KAFKA_TOPIC = "raw_stock_ticks"
 
